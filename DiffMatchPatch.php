@@ -1338,7 +1338,7 @@ class DiffMatchPatch {
 
     for ($x = 0; $x < sizeof($diffs); $x++) {
       $op   = $diffs[$x][0];    // Operation (insert, delete, equal)
-      $data = $diffs[$x][1];  // Text of change.
+      $text = $diffs[$x][1];  // Text of change.
 
       $text = str_replace(['&', '<', '>', "\n"], ['&amp;', '&lt;', '&gt;', '&para;<br>'], $text);
 

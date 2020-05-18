@@ -1,18 +1,23 @@
+# Diff Match Patch
 
-     ,-----.,--.                  ,--. ,---.   ,--.,------.  ,------.
-    '  .--./|  | ,---. ,--.,--. ,-|  || o   \  |  ||  .-.  \ |  .---'
-    |  |    |  || .-. ||  ||  |' .-. |`..'  |  |  ||  |  \  :|  `--, 
-    '  '--'\|  |' '-' ''  ''  '\ `-' | .'  /   |  ||  '--'  /|  `---.
-     `-----'`--' `---'  `----'  `---'  `--'    `--'`-------' `------'
-    ----------------------------------------------------------------- 
+Diff Match Patch is a high-performance library in multiple languages that manipulates plain text.  
+PHP transpiling of [@google/diff-match-patch](https://github.com/google/diff-match-patch)
 
+``` php
+<?php
+require 'DiffMatchPatch.php';
 
-Hi there! Welcome to Cloud9 IDE!
+$leftTxt  = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
+$rightTxt = 'Lorem ipsum sit amet, conxxsecxtetur adipiscing elit!!!';
+$postprocessing = 'semantic';
 
-To get you started, create some files, play with the terminal,
-or visit http://docs.c9.io for our documentation.
-If you want, you can also go watch some training videos at
-http://www.youtube.com/user/c9ide.
+$dmp  = new DiffMatchPatch();
+$diff = $dmp->diff_main($leftTxt, $rightTxt);
 
-Happy coding!
-The Cloud9 IDE team
+switch($postprocessing) {
+    case "semantic": $dmp->diff_cleanupSemantic($diff); break;
+    case "efficiency": $dmp->diff_cleanupEfficiency($diff); break;
+}
+
+echo $dmp->diff_prettyHtml($diff);
+```
