@@ -1,0 +1,31 @@
+/* INPUT */
+#form {
+  margin-bottom: 30px;
+}
+.form-row {
+  padding: 15px;
+}
+#input {
+  display: flex;
+}
+#input textarea {
+  width: 100%;
+  resize: vertical;
+}
+
+/* OUTPUT */
+#output {
+  white-space: pre-line;
+  font-size: 16px;
+  line-height: 1.5;
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
+}
+del.diff {
+  color: #cb2431;
+  text-decoration: line-through;
+  background: #ffdce0;
+}
+ins.diff {
+  background: #e6ffed;
+  text-decoration: none;
+}

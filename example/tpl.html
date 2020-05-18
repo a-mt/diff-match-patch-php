@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Diff Match Patch</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+      function diff(e) {
+        e.preventDefault();
+
+        var data = new FormData();
+        data.append("leftTxt", this.elements.left.value);
+        data.append("rightTxt", this.elements.right.value);
+        data.append("postprocessing", this.elements.postprocessing.value);
+
+        window.fetch(window.location.pathname, {
+            method: "POST",
+            body: data
+        })
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById('output').innerHTML = data;
+        });
+      } 
+    </script>
+  </head>
+  <body>
+
+    <form id="form" onSubmit="return diff.call(this, event)">
+      <div id="input">
+        <textarea name="left" rows="10">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      Phasellus pulvinar sem eu aliquet pharetra.
+      Mauris vel justo dolor.</textarea>
+        <textarea name="right" rows="10">Lorem ipsum sit amet, conxxsecxtetur adipiscing elit!!!
+      Mauris vel justo dolor.
+      Donec aliquam bibendum ex, vitae pulvinar tellus bibendum non. </textarea>
+      </div>
+      <div class="form-row">
+        <div>
+          <input type="radio" id="semantic" name="postprocessing" value="semantic" checked>
+          <label for="semantic">Semantic Cleanup</label>
+        </div>
+        <div>
+          <input type="radio" id="efficiency" name="postprocessing" value="efficiency">
+          <label for="efficiency">Efficiency Cleanup</label>
+        </div>
+        <div>
+          <input type="radio" id="raw" name="postprocessing" value="raw">
+          <label for="raw">No Cleanup</label>
+        </div>
+      </div>
+      <button type="submit">Compute Diff</button>
+    </form>
+    <div id="output"></div>
+
+  </body>
+</html>
