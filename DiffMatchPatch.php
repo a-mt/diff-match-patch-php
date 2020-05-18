@@ -1572,7 +1572,7 @@ class DiffMatchPatch {
      * @return {number} Overall score for match (0.0 = good, 1.0 = bad).
      * @private
      */
-    $match_bitapScore_ = function($e, $x) {
+    $match_bitapScore_ = function($e, $x) use(&$loc, &$pattern) {
       $accuracy  = $e / strlen($pattern);
       $proximity = abs($loc - $x);
 
@@ -1786,18 +1786,18 @@ class DiffMatchPatch {
 
     // Method 2: diffs
     // Compute text1 from diffs.
-    } else if (gettype($a) == 'object' && $opt_b === null && $opt_c === null) {
+    } else if (gettype($a) == 'array' && $opt_b === null && $opt_c === null) {
       $diffs = $a;
       $text1 = $this->diff_text1($diffs);
 
     // Method 3: text1, diffs
-    } else if (gettype($a) == 'string' && gettype($opt_b) == 'object' && $opt_c === null) {
+    } else if (gettype($a) == 'string' && gettype($opt_b) == 'array' && $opt_c === null) {
       $text1 = $a;
       $diffs = $opt_b;
 
     // Method 4: text1, text2, diffs
     // text2 is not used.
-    } else if (gettype($a) == 'string' && gettype($opt_b) == 'string' && gettype($opt_c) == 'object') {
+    } else if (gettype($a) == 'string' && gettype($opt_b) == 'string' && gettype($opt_c) == 'array') {
       $text1 = $a;
       $diffs = $opt_c;
 
@@ -2237,7 +2237,7 @@ class DiffMatchPatch {
     $patches = [];
     $text = explode("\n", $textline);
     $textPointer = 0;
-    $patchHeader = "^@@ -(\\d+),?(\\d*) \\+(\\d+),?(\\d*) @@$";
+    $patchHeader = "/^@@ -(\\d+),?(\\d*) \\+(\\d+),?(\\d*) @@$/";
 
     while ($textPointer < sizeof($text)) {
       if (!preg_match($patchHeader, $text[$textPointer], $m)) {
