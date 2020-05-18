@@ -529,7 +529,7 @@ class DiffMatchPatch {
         if($lineEnd === false) {
           $lineEnd = strlen($text) - 1;
         }
-        $line = substr($text, $lineStart, $lineEnd + 1);
+        $line = substr($text, $lineStart, $lineEnd - $lineStart + 1);
 
         if(isset($lineHash[$line])) {
           $chars .= chr($lineHash[$line]);
@@ -603,8 +603,8 @@ class DiffMatchPatch {
     $pointerstart = 0;
 
     while ($pointermin < $pointermid) {
-      if (substr($text1, $pointerstart, $pointermid) ==
-          substr($text2, $pointerstart, $pointermid)) {
+      if (substr($text1, $pointerstart, $pointermid - $pointerstart) ==
+          substr($text2, $pointerstart, $pointermid - $pointerstart)) {
         $pointermin  = $pointermid;
         $pointerstart = $pointermin;
       } else {
@@ -637,8 +637,11 @@ class DiffMatchPatch {
     $pointerend = 0;
 
     while ($pointermin < $pointermid) {
-      if (substr($text1, strlen($text1) - $pointermid, strlen($text1) - $pointerend) ==
-          substr($text2, strlen($text2) - $pointermid, strlen($text2) - $pointerend)) {
+      $start1 = strlen($text1) - $pointermid;
+      $start2 = strlen($text2) - $pointermid;
+
+      if (substr($text1, $start1, strlen($text1) - $pointerend - $start1) ==
+          substr($text2, $start2, strlen($text2) - $pointerend - $start2)) {
         $pointermin = $pointermid;
         $pointerend = $pointermin;
       } else {
@@ -743,7 +746,7 @@ class DiffMatchPatch {
     $diff_halfMatchI_ = function($longtext, $shorttext, $i) {
 
       // Start with a 1/4 length substring at position i as a seed.
-      $seed = substr($longtext, $i, $i + floor(strlen($longtext) / 4));
+      $seed = substr($longtext, $i, floor(strlen($longtext) / 4));
       $j = -1;
       $best_common = '';
 
@@ -752,8 +755,8 @@ class DiffMatchPatch {
         $suffixLength = $this->diff_commonSuffix(substr($longtext, 0, $i), substr($shorttext, 0, $j));
 
         if (strlen($best_common) < $suffixLength + $prefixLength) {
-          $best_common = substr($shorttext, $j - $suffixLength, $j) .
-                          substr($shorttext, $j, $j + $prefixLength);
+          $best_common = substr($shorttext, $j - $suffixLength, $suffixLength) .
+                          substr($shorttext, $j, $prefixLength);
 
           $best_longtext_a  = substr($longtext, 0, $i - $suffixLength);
           $best_longtext_b  = substr($longtext, $i + $prefixLength);
@@ -1480,7 +1483,8 @@ class DiffMatchPatch {
           if (!is_numeric($param) || $n < 0) {
             throw new Exception('Invalid number in diff_fromDelta: ' . $param);
           }
-          $text = substr($text1, $pointer, $pointer += $n);
+          $text = substr($text1, $pointer, $n);
+          $pointer += $n;
 
           if ($tokens[$x][0] == '=') {
             $diffs[$diffsLength++] = new Diff(DIFF_EQUAL, $text);
@@ -1534,7 +1538,7 @@ class DiffMatchPatch {
       return -1;
 
     // Perfect match at the perfect spot!  (Includes case of null pattern)
-    } else if (substr($text, $loc, $loc + strlen($pattern)) == $pattern) {
+    } else if (substr($text, $loc, strlen($pattern)) == $pattern) {
       return $loc;
 
     // Do a fuzzy compare.
@@ -1707,7 +1711,7 @@ class DiffMatchPatch {
     if ($patch->start2 === null) {
       throw Error('patch not initialized');
     }
-    $pattern = substr($text, $patch->start2, $patch->start2 + $patch->length1);
+    $pattern = substr($text, $patch->start2, $patch->length1);
     $padding = 0;
 
     // Look for the first and last matches of pattern in text.  If two different
@@ -1718,20 +1722,20 @@ class DiffMatchPatch {
 
       $padding += DiffMatchPatch::$Patch_Margin;
       $pattern = substr($text, $patch->start2 - $padding,
-                               $patch->start2 + $patch->length1 + $padding);
+                               $patch->length1 + $padding + $padding);
     }
 
     // Add one chunk for good luck.
     $padding += DiffMatchPatch::$Patch_Margin;
 
     // Add the prefix.
-    $prefix = substr($text, $patch->start2 - $padding, $patch->start2);
+    $prefix = substr($text, $patch->start2 - $padding, $padding);
     if ($prefix) {
       array_unshift($patch->diffs, new Diff(DIFF_EQUAL, $prefix));
     }
 
     // Add the suffix.
-    $suffix = substr($text, $patch->start2 + $patch->length1, $patch->start2 + $patch->length1 + $padding);
+    $suffix = substr($text, $patch->start2 + $patch->length1, $padding);
     if ($suffix) {
       array_push($patch->diffs, new Diff(DIFF_EQUAL, $suffix));
     }
@@ -1979,9 +1983,9 @@ class DiffMatchPatch {
         $delta = $start_loc - $expected_loc;
 
         if ($end_loc == -1) {
-          $text2 = substr($text, $start_loc, $start_loc + strlen($text1));
+          $text2 = substr($text, $start_loc, strlen($text1));
         } else {
-          $text2 = substr($text, $start_loc, $end_loc + DiffMatchPatch::$Match_MaxBits);
+          $text2 = substr($text, $start_loc, $end_loc - $start_loc + DiffMatchPatch::$Match_MaxBits);
         }
 
         // Perfect match, just shove the replacement text in.
@@ -2030,7 +2034,7 @@ class DiffMatchPatch {
     } // end for $x
 
     // Strip the padding off.
-    $text = substr($text, strlen($nullPadding), strlen($text) - strlen($nullPadding));
+    $text = substr($text, strlen($nullPadding), strlen($text) - strlen($nullPadding) - strlen($nullPadding));
     return [$text, $results];
   }
 
