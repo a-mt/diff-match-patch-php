@@ -1018,7 +1018,7 @@ class DiffMatchPatch {
         $bestScore     = $diff_cleanupSemanticScore_($equality1, $edit)
                           + $diff_cleanupSemanticScore_($edit, $equality2);
 
-        while ($edit[0] === $equality2[0]) {
+        while (@$edit[0] === @$equality2[0]) {
           $equality1 .= $edit[0];
           $edit       = substr($edit, 1) . $equality2[0];
           $equality2  = substr($equality2, 1);
