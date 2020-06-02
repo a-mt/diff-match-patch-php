@@ -1,5 +1,6 @@
 <?php
 // Based on https://github.com/google/diff-match-patch/blob/master/javascript/diff_match_patch_uncompressed.js
+namespace DiffMatchPatch;
 
 /**
  * The data structure representing a diff is an array of tuples:
@@ -29,7 +30,7 @@ function encodeURI($uri) {
  * @param {string} text Text to be deleted, inserted, or retained.
  * @constructor
  */
-class Diff implements ArrayAccess {
+class Diff implements \ArrayAccess {
   public $data;
   
   public function __construct($op, $text) {
@@ -1018,7 +1019,7 @@ class DiffMatchPatch {
         $bestScore     = $diff_cleanupSemanticScore_($equality1, $edit)
                           + $diff_cleanupSemanticScore_($edit, $equality2);
 
-        while (@$edit[0] === @$equality2[0]) {
+        while ($edit[0] === $equality2[0]) {
           $equality1 .= $edit[0];
           $edit       = substr($edit, 1) . $equality2[0];
           $equality2  = substr($equality2, 1);
