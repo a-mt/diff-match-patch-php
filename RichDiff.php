@@ -1,4 +1,5 @@
 <?php
+namespace DiffMatchPatch;
 require_once __DIR__ . '/DiffMatchPatch.php';
 
 /**
@@ -675,8 +676,8 @@ class RichDiff extends DiffArray{
     try {
       $tags = [];
 
-      $doc = new DomDocument();
-      $doc->loadHTML('<?xml encoding="utf-8" ?><body>' . $html . '</body>', LIBXML_NOWARNING | LIBXML_NOERROR);
+      $doc = new \DomDocument();
+      $doc->loadHTML('<?xml encoding="utf-8" ?><body>' . str_replace('&', "&000", $html) . '</body>', LIBXML_NOWARNING | LIBXML_NOERROR);
       $body = $doc->documentElement->firstChild;
 
       if ($body->hasChildNodes()) {
@@ -686,6 +687,8 @@ class RichDiff extends DiffArray{
           if(!$txt) {
               continue;
           }
+          // We replaced & with &000 to be able to keep html entities as-is
+          $txt = str_replace('&amp;000', '&', $txt);
 
           // Keep tags as-is (ie <p>)
           if($child->nodeType == 1) {
@@ -697,7 +700,7 @@ class RichDiff extends DiffArray{
             while(preg_match('/\s+/', $txt, $m, PREG_OFFSET_CAPTURE)) {
               $k = $m[0][1];
               $l = strlen($m[0][0]);
-    
+
               if($k) {
                 $tags[] = new Tag(substr($txt, 0, $k));
               }
@@ -838,7 +841,6 @@ class RichDiff extends DiffArray{
       return '';
     }
     $html = '';
-    $txt = implode('', $data);
 
     foreach($data as $txt) {
       if(!$state) {
