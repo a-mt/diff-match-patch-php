@@ -846,7 +846,7 @@ class RichDiff extends DiffArray{
       if(!$state) {
        $html .= $txt;
 
-      } else if(preg_match('/^<(?:p|table|h\d+|ul|ol|dl|blockquote|hr|details|pre)(?: |>)/', $txt)) {
+      } else if(preg_match('/^<(?:p|table|h\d+|ul|ol|dl|li|dt|dd|blockquote|hr|details|pre)(?: |>)/', $txt)) {
         switch($state) {
           case -1: $html .= '<div class="rich-diff del">' . $txt . '</div>' . "\n"; break;
           case 1:  $html .= '<div class="rich-diff ins">' . $txt . '</div>' . "\n"; break;
